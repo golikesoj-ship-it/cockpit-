@@ -106,6 +106,42 @@
     </div>
   </div>
 
+  <!-- ============ NORTH STAR ============ -->
+  <div class="pane" id="pane-north">
+    <div class="slotcard">
+      <div class="t">★ North Star — read it, then act from it</div>
+      <div class="q" style="font-size:20px;">I see what is coming before most people do, and I say it in plain words that help a leader act.</div>
+      <div class="sub">I have done this before: I built Systems Innovation at UNICEF before anyone asked for it. Now I do it on purpose.</div>
+    </div>
+
+    <div class="ifthen" style="margin-top:14px;">
+      <p style="font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); margin-bottom:10px;">I make three things only</p>
+      <p><b>Short briefs.</b> Two pages that turn a leader's confusion into a decision.</p>
+      <p><b>New playbooks.</b> Ideas nobody has named yet — always with a plan for how to do them.</p>
+      <p><b>Honest private talks.</b> I tell leaders the truth to their face, with a straight spine.</p>
+    </div>
+
+    <div class="ifthen" style="margin-top:14px;">
+      <p style="font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); margin-bottom:10px;">I say no to</p>
+      <p><b>Busywork.</b> Running things that already run is someone else's job.</p>
+      <p><b>Finished projects.</b> Once a thing works on its own, I hand it over and move on.</p>
+      <p><b>Ideas without a plan.</b> I never share an idea without how to do it.</p>
+    </div>
+
+    <div class="ifthen" style="margin-top:14px;">
+      <p style="font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); margin-bottom:10px;">How I live</p>
+      <p>Long, quiet blocks of reading and thinking give me energy. I protect them.</p>
+      <p>When a big decision is happening, <b>I am in the room, at full strength</b>.</p>
+      <p>I go deep with one or two leaders at a time. Never more.</p>
+    </div>
+
+    <div class="ifthen" style="margin-top:14px; border-color:var(--hot);">
+      <p style="font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--hot); margin-bottom:10px;">Why I do it</p>
+      <p>This is what I do — it is not all of who I am. The work exists to make life better for <b>real people</b>. Medicine, my family, and the Chronicle come before it, always.</p>
+      <p style="margin-top:12px;"><b style="color:var(--hot);">Next proof:</b> one leader · one problem · one two-page brief. Sent.</p>
+    </div>
+  </div>
+
   <!-- ============ PROTOCOLS ============ -->
   <div class="pane" id="pane-proto">
     <details open>
@@ -199,6 +235,7 @@
 
 <nav class="tabbar">
   <button class="on" onclick="tab('now', this)">Now</button>
+  <button onclick="tab('north', this)">★ North</button>
   <button onclick="tab('proto', this)">Protocols</button>
   <button onclick="tab('ledger', this)">Ledger</button>
 </nav>
@@ -209,7 +246,7 @@ const SLOTS = [
   { h:7,  m:30, t:"07:30 — The Drill",        q:"Pick today's hardest room. Run one protocol from memory — eyes closed, real faces.", sub:"Closed-book. The faces, the verdict, the spine, the words. Then two short inhales, one long exhale. Sixty seconds; this is the whole system." },
   { h:11, m:0,  t:"11:00 — Avoidance check",  q:"What am I avoiding right now?", sub:"The success you're looking for is waiting in the work you're avoiding. Name it, then one micro-action." },
   { h:13, m:30, t:"13:30 — The stranger",     q:"What would a stranger conclude I want out of life, based only on my last hour?", sub:"Behavior is the confession. If the answer stings, change the next hour, not the story." },
-  { h:15, m:15, t:"15:15 — Direction & drift check",  q:"Am I moving toward the life I hate, or the life I want? And right now — maintenance work, a dead framework I should hand off, or an idea with no execution plan?", sub:"One or the other; there is no neutral hour. The three drift patterns are behavioral — each has a yes/no answer today." },
+  { h:15, m:15, t:"15:15 — Direction & drift check",  q:"Am I moving toward the life I hate, or the life I want? And right now — maintenance work, a dead framework I should hand off, or an idea with no execution plan?", sub:"Drift is measured against something. Open ★ North and read it — then answer. Each drift pattern has a yes/no answer today." },
   { h:17, m:0,  t:"17:00 — Integrity check",  q:"What important thing am I pretending isn't important?", sub:"Pretending is the identity defending itself. Say the thing out loud, even just to yourself." },
   { h:19, m:30, t:"19:30 — Aliveness audit",  q:"Where did I trade aliveness for safety today — protecting my identity, or my genuine desire?", sub:"The old self will cost you the new one, or the other way round. Pick." },
   { h:21, m:0,  t:"21:00 — Close the day",    q:"When did I feel most alive today? Most dead? — and log today's rep.", sub:"Fired or flinched, it goes on the ledger. One sentence: what do I refuse to repeat tomorrow?" }
