@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Cockpit</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0e1014">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cockpit">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root { --bg:#0e1014; --card:#16181d; --ink:#e9e5dc; --dim:#8b877e; --hot:#c2543a; --line:rgba(139,135,126,.25); }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg); color:var(--ink); font-family:-apple-system, "Segoe UI", "Liberation Sans", Arial, sans-serif; min-height:100vh; padding-bottom:90px; }
+  header { padding:26px 22px 14px; }
+  header .k { font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:var(--dim); }
+  header h1 { font-size:26px; letter-spacing:.02em; margin-top:4px; }
+  header h1 span { color:var(--hot); }
+  .wrap { padding:0 18px; max-width:640px; margin:0 auto; }
+  .tabbar { position:fixed; bottom:0; left:0; right:0; display:flex; background:#101318; border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom); z-index:10; }
+  .tabbar button { flex:1; background:none; border:none; color:var(--dim); font-size:12px; letter-spacing:.12em; text-transform:uppercase; padding:16px 4px 14px; cursor:pointer; }
+  .tabbar button.on { color:var(--hot); font-weight:bold; }
+  .pane { display:none; } .pane.on { display:block; }
+
+  /* NOW */
+  .slotcard { background:var(--card); border-radius:14px; padding:26px 22px; margin-top:14px; }
+  .slotcard .t { font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--hot); margin-bottom:12px; }
+  .slotcard .q { font-size:24px; line-height:1.3; font-weight:bold; color:#fff; }
+  .slotcard .sub { font-size:14px; line-height:1.45; color:var(--dim); margin-top:14px; }
+  .next { margin-top:14px; font-size:13px; color:var(--dim); padding:0 6px; }
+  .ifthen { margin-top:22px; padding:16px 18px; border:1px solid var(--line); border-radius:12px; }
+  .ifthen p { font-size:14px; line-height:1.55; }
+  .ifthen b { color:var(--hot); }
+  .sched { margin-top:22px; }
+  .sched h3, .lh { font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--dim); margin:20px 0 8px 4px; }
+  .srow { display:flex; gap:14px; padding:9px 6px; border-bottom:1px solid var(--line); font-size:13.5px; }
+  .srow.past { opacity:.38; }
+  .srow.now .tm, .srow.now { color:var(--hot); font-weight:bold; }
+  .srow .tm { flex:0 0 52px; color:var(--dim); font-variant-numeric:tabular-nums; }
+
+  /* PROTOCOLS */
+  details { background:var(--card); border-radius:14px; margin-top:12px; overflow:hidden; }
+  summary { list-style:none; cursor:pointer; padding:18px 20px; display:flex; align-items:baseline; gap:10px; }
+  summary::-webkit-details-marker { display:none; }
+  summary .n { color:var(--hot); font-size:12px; letter-spacing:.14em; }
+  summary .h { font-size:17px; font-weight:bold; color:#fff; }
+  summary .w { font-size:12px; color:var(--dim); margin-left:auto; text-align:right; }
+  .steps { padding:0 20px 18px; }
+  .steps p { font-size:14.5px; line-height:1.5; margin-bottom:10px; color:var(--ink); }
+  .steps p b { color:#fff; }
+  .steps .m { color:var(--hot); font-weight:bold; margin-top:12px; }
+  .steps .lab { font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); margin:14px 0 6px; }
+
+  /* LEDGER */
+  .stat { display:flex; gap:12px; margin-top:14px; }
+  .stat div { flex:1; background:var(--card); border-radius:12px; padding:14px 16px; }
+  .stat .num { font-size:26px; font-weight:bold; color:#fff; }
+  .stat .lbl2 { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim); margin-top:2px; }
+  form { background:var(--card); border-radius:14px; padding:18px; margin-top:14px; }
+  form label { display:block; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin:12px 0 5px; }
+  form input[type=text], form textarea { width:100%; background:#0e1014; border:1px solid var(--line); border-radius:8px; color:var(--ink); font-size:15px; padding:10px 12px; font-family:inherit; }
+  form textarea { min-height:44px; resize:vertical; }
+  .ff { display:flex; gap:10px; margin-top:4px; }
+  .ff button { flex:1; padding:12px; border-radius:8px; border:1px solid var(--line); background:#0e1014; color:var(--dim); font-size:14px; font-weight:bold; cursor:pointer; }
+  .ff button.sel-fired { background:var(--hot); border-color:var(--hot); color:#fff; }
+  .ff button.sel-flinch { background:#3a3f49; border-color:#3a3f49; color:#fff; }
+  .save { width:100%; margin-top:18px; padding:14px; border:none; border-radius:10px; background:var(--hot); color:#fff; font-size:15px; font-weight:bold; letter-spacing:.06em; cursor:pointer; }
+  .entry { background:var(--card); border-radius:12px; padding:14px 16px; margin-top:10px; font-size:13.5px; line-height:1.5; }
+  .entry .eh { display:flex; justify-content:space-between; margin-bottom:6px; }
+  .entry .tag { font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:bold; }
+  .tag.fired { color:var(--hot); } .tag.flinched { color:#7d8494; }
+  .entry .dt { color:var(--dim); font-size:12px; }
+  .entry .row b { color:var(--dim); font-weight:normal; }
+  .exp { width:100%; margin-top:14px; padding:12px; background:none; border:1px solid var(--line); border-radius:10px; color:var(--dim); font-size:13px; letter-spacing:.08em; cursor:pointer; }
+  .note { font-size:12.5px; line-height:1.5; color:var(--dim); margin-top:14px; padding:0 4px; }
+  .warn { font-size:12.5px; line-height:1.5; color:#d0a03c; margin-top:10px; padding:0 4px; display:none; }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="k">Field System · Layer 2</div>
+  <h1>The <span>Cockpit</span></h1>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ NOW ============ -->
+  <div class="pane on" id="pane-now">
+    <div class="slotcard">
+      <div class="t" id="slot-time">—</div>
+      <div class="q" id="slot-q">—</div>
+      <div class="sub" id="slot-sub"></div>
+    </div>
+    <div class="next" id="slot-next"></div>
+    <div class="ifthen">
+      <p><b>If I feel the shrink</b> → faces, one by one.</p>
+      <p><b>If I catch myself performing</b> → what does the room need?</p>
+      <p><b>If the replay starts</b> → name the ask, take it back, do nothing.</p>
+    </div>
+    <div class="sched">
+      <h3>Today's fire schedule</h3>
+      <div id="schedule"></div>
+      <p class="note">v0.1 shows the live question when opened. For push, set these seven times once as native phone reminders, each titled "Cockpit" — the phone is the delivery layer, this is the content layer.</p>
+    </div>
+  </div>
+
+  <!-- ============ PROTOCOLS ============ -->
+  <div class="pane" id="pane-proto">
+    <details open>
+      <summary><span class="n">01</span><span class="h">ONE BY ONE</span><span class="w">groups ·&nbsp;armed state</span></summary>
+      <div class="steps">
+        <p><b>1 · Notice.</b> "The threat response is here." Don't fight it.</p>
+        <p><b>2 · Faces, one by one.</b> Not the room — the faces. The cohort intimidates; the individual never does.</p>
+        <p><b>3 · Verdict:</b> "Man-to-man, I am not less than any person here."</p>
+        <p><b>4 · Spark:</b> "Who the hell are they anyway?" The heat is fuel — let it straighten you.</p>
+        <p><b>5 · Body:</b> spine straight · breath long, deep, smooth.</p>
+        <p><b>6 · Fire.</b> No hesitation. No explaining. No softening.</p>
+        <p><b>7 · Silence.</b> Stop. Let the room recalibrate.</p>
+        <p class="m">Never punished for my force. Only for hiding it.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="n">02</span><span class="h">FACING RANK</span><span class="w">superiors ·&nbsp;run before</span></summary>
+      <div class="steps">
+        <p class="lab">The corridor</p>
+        <p><b>1 · Name the prediction.</b> "If power sees me, it will punish me." A prediction, not a fact — my data refutes it.</p>
+        <p><b>2 · Read the ledger.</b> Full force twice: never punished. Hid once: punished — "not a killer," then the exit.</p>
+        <p><b>3 · De-rank.</b> One man. One woman. Rank is a costume — remove it with your eyes.</p>
+        <p><b>4 · Verdict:</b> "Man-to-man, I am not less than this person."</p>
+        <p><b>5 · Body:</b> spine · breath.</p>
+        <p class="lab">The circle</p>
+        <p><b>6 · Fire early.</b> One full-force sentence in the first two minutes. Almedalen was lost in the waiting.</p>
+        <p><b>7 · Hold the rules.</b> No auditioning. No over-explaining. Equal tone. No shrink.</p>
+        <p class="m">My work convened this room. I don't need permission to command it.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="n">03</span><span class="h">SERVE THE ROOM</span><span class="w">rooms you lead</span></summary>
+      <div class="steps">
+        <p><b>1 · Settle.</b> Feet on floor, shoulders down. Five seconds.</p>
+        <p><b>2 · Receive.</b> What does this room need — not what can I offer?</p>
+        <p><b>3 · Name it.</b> "It sounds like…" — let them confirm or correct.</p>
+        <p><b>4 · Check.</b> Move the room forward, or manage how they see me?</p>
+        <p><b>5 · Move.</b> The true line, not the best line. Next step. Stop.</p>
+        <p class="m">I'm here to move this room forward. That's it.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="n">04</span><span class="h">THE RECOVERY</span><span class="w">after the room</span></summary>
+      <div class="steps">
+        <p><b>1 · The replay is resistance.</b> If I'm scared of feeling it, I'm already in it. Let it land.</p>
+        <p><b>2 · Seriously, not literally.</b> Welcome the feeling without becoming it.</p>
+        <p><b>3 · Name the ask.</b> Take it back. Do nothing — it passes.</p>
+        <p><b>4 · Passenger or Driver?</b> Name what I can't change; one guaranteed micro-action.</p>
+        <p><b>5 · Log the rep.</b> Fired or flinched, same day.</p>
+        <p class="m">I am a solid container. I exist without their observation.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- ============ LEDGER ============ -->
+  <div class="pane" id="pane-ledger">
+    <div class="stat">
+      <div><div class="num" id="n-fired">0</div><div class="lbl2">Fired</div></div>
+      <div><div class="num" id="n-flinched">0</div><div class="lbl2">Flinched</div></div>
+      <div><div class="num" id="n-rounds">0</div><div class="lbl2">Rounds at the belief</div></div>
+    </div>
+    <p class="warn" id="storage-warn">Storage unavailable in this preview — entries will not survive closing. Open the saved file in your own browser for a persistent ledger.</p>
+    <form id="f" onsubmit="return saveEntry(event)">
+      <label>Room / situation</label>
+      <input type="text" id="f-room" placeholder="e.g. budget meeting, funder circle" required>
+      <label>The trigger</label>
+      <input type="text" id="f-trigger" placeholder="what set off the shrink?">
+      <label>Fired or flinched</label>
+      <div class="ff">
+        <button type="button" id="b-fired" onclick="setFF('fired')">FIRED</button>
+        <button type="button" id="b-flinched" onclick="setFF('flinched')">FLINCHED</button>
+      </div>
+      <label>Feared outcome</label>
+      <input type="text" id="f-feared" placeholder="what did the old belief predict?">
+      <label>Actual outcome</label>
+      <input type="text" id="f-actual" placeholder="what actually happened?">
+      <label>Next time</label>
+      <input type="text" id="f-next" placeholder="what signal will I catch earlier?">
+      <button class="save" type="submit">LOG THE REP</button>
+    </form>
+    <div class="lh">Evidence on record</div>
+    <div id="entries"></div>
+    <button class="exp" onclick="exportLedger()">EXPORT LEDGER (COPY AS TEXT)</button>
+    <button class="exp" onclick="backupLedger()">BACKUP (DOWNLOAD FILE)</button>
+    <button class="exp" onclick="document.getElementById('restore-file').click()">RESTORE FROM BACKUP</button>
+    <input type="file" id="restore-file" accept=".json" style="display:none" onchange="restoreLedger(this)">
+    <p class="note">A ledger of wins only is a shrine. Log everything — every "actual outcome" where punishment fails to appear is a round through "power will punish me."</p>
+  </div>
+
+</div>
+
+<nav class="tabbar">
+  <button class="on" onclick="tab('now', this)">Now</button>
+  <button onclick="tab('proto', this)">Protocols</button>
+  <button onclick="tab('ledger', this)">Ledger</button>
+</nav>
+
+<script>
+// ---------- schedule ----------
+const SLOTS = [
+  { h:7,  m:30, t:"07:30 — The Drill",        q:"Pick today's hardest room. Run one protocol from memory — eyes closed, real faces.", sub:"Closed-book. The faces, the verdict, the spine, the words. Then two short inhales, one long exhale. Sixty seconds; this is the whole system." },
+  { h:11, m:0,  t:"11:00 — Avoidance check",  q:"What am I avoiding right now?", sub:"The success you're looking for is waiting in the work you're avoiding. Name it, then one micro-action." },
+  { h:13, m:30, t:"13:30 — The stranger",     q:"What would a stranger conclude I want out of life, based only on my last hour?", sub:"Behavior is the confession. If the answer stings, change the next hour, not the story." },
+  { h:15, m:15, t:"15:15 — Direction check",  q:"Am I moving toward the life I hate, or the life I want?", sub:"One or the other. There is no neutral hour." },
+  { h:17, m:0,  t:"17:00 — Integrity check",  q:"What important thing am I pretending isn't important?", sub:"Pretending is the identity defending itself. Say the thing out loud, even just to yourself." },
+  { h:19, m:30, t:"19:30 — Aliveness audit",  q:"Where did I trade aliveness for safety today — protecting my identity, or my genuine desire?", sub:"The old self will cost you the new one, or the other way round. Pick." },
+  { h:21, m:0,  t:"21:00 — Close the day",    q:"When did I feel most alive today? Most dead? — and log today's rep.", sub:"Fired or flinched, it goes on the ledger. One sentence: what do I refuse to repeat tomorrow?" }
+];
+function slotIndex(now){
+  let idx = -1;
+  for (let i=0;i<SLOTS.length;i++){
+    const t = SLOTS[i].h*60+SLOTS[i].m;
+    if (now >= t) idx = i;
+  }
+  return idx;
+}
+function renderNow(){
+  const d = new Date();
+  const mins = d.getHours()*60+d.getMinutes();
+  const i = slotIndex(mins);
+  const cur = i>=0 ? SLOTS[i] : null;
+  document.getElementById('slot-time').textContent = cur ? cur.t : "Before the day begins";
+  document.getElementById('slot-q').textContent = cur ? cur.q : "Spine straight. Breath long. The first question fires at 07:30.";
+  document.getElementById('slot-sub').textContent = cur ? cur.sub : "";
+  const nxt = SLOTS[i+1];
+  document.getElementById('slot-next').textContent = nxt ? ("Next: " + nxt.t.replace(" — ", " · ")) : "Last question of the day is live.";
+  const sc = document.getElementById('schedule');
+  sc.innerHTML = "";
+  SLOTS.forEach((s,j)=>{
+    const row = document.createElement('div');
+    row.className = "srow" + (j<i ? " past" : (j===i ? " now" : ""));
+    const label = s.t.split(" — ")[1];
+    row.innerHTML = '<span class="tm">' + String(s.h).padStart(2,'0') + ':' + String(s.m).padStart(2,'0') + '</span><span>' + label + '</span>';
+    sc.appendChild(row);
+  });
+}
+renderNow();
+setInterval(renderNow, 30000);
+
+// ---------- tabs ----------
+function tab(name, btn){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pane-'+name).classList.add('on');
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// ---------- ledger storage (graceful: localStorage if available, memory otherwise) ----------
+let MEM = [];
+let persistent = true;
+function loadEntries(){
+  try { return JSON.parse(localStorage.getItem('cockpit-ledger')||'[]'); }
+  catch(e){ persistent = false; document.getElementById('storage-warn').style.display='block'; return MEM; }
+}
+function storeEntries(arr){
+  if (persistent){ try { localStorage.setItem('cockpit-ledger', JSON.stringify(arr)); return; } catch(e){ persistent=false; document.getElementById('storage-warn').style.display='block'; } }
+  MEM = arr;
+}
+let ff = null;
+function setFF(v){
+  ff = v;
+  document.getElementById('b-fired').className = v==='fired' ? 'sel-fired' : '';
+  document.getElementById('b-flinched').className = v==='flinched' ? 'sel-flinch' : '';
+}
+function saveEntry(ev){
+  ev.preventDefault();
+  if (!ff){ alert("Fired or flinched — pick one. Flinches count; a ledger of wins is a shrine."); return false; }
+  const e = {
+    date: new Date().toISOString().slice(0,10),
+    room: document.getElementById('f-room').value.trim(),
+    trigger: document.getElementById('f-trigger').value.trim(),
+    ff: ff,
+    feared: document.getElementById('f-feared').value.trim(),
+    actual: document.getElementById('f-actual').value.trim(),
+    next: document.getElementById('f-next').value.trim()
+  };
+  const arr = loadEntries(); arr.unshift(e); storeEntries(arr);
+  document.getElementById('f').reset(); setFF(null); ff = null;
+  document.getElementById('b-fired').className=''; document.getElementById('b-flinched').className='';
+  renderEntries();
+  return false;
+}
+function renderEntries(){
+  const arr = loadEntries();
+  const el = document.getElementById('entries');
+  el.innerHTML = "";
+  let fired=0, flinched=0;
+  arr.forEach(e=>{
+    if (e.ff==='fired') fired++; else flinched++;
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML =
+      '<div class="eh"><span class="tag '+e.ff+'">'+e.ff.toUpperCase()+'</span><span class="dt">'+e.date+'</span></div>' +
+      '<div class="row"><b>Room:</b> '+esc(e.room)+'</div>' +
+      (e.trigger ? '<div class="row"><b>Trigger:</b> '+esc(e.trigger)+'</div>' : '') +
+      (e.feared ? '<div class="row"><b>Feared:</b> '+esc(e.feared)+'</div>' : '') +
+      (e.actual ? '<div class="row"><b>Actual:</b> '+esc(e.actual)+'</div>' : '') +
+      (e.next ? '<div class="row"><b>Next time:</b> '+esc(e.next)+'</div>' : '');
+    el.appendChild(div);
+  });
+  document.getElementById('n-fired').textContent = fired;
+  document.getElementById('n-flinched').textContent = flinched;
+  document.getElementById('n-rounds').textContent = arr.length;
+}
+function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function exportLedger(){
+  const arr = loadEntries();
+  const txt = arr.map(e=>[
+    e.date+" · "+e.ff.toUpperCase()+" · "+e.room,
+    e.trigger ? "  Trigger: "+e.trigger : "",
+    e.feared ? "  Feared: "+e.feared : "",
+    e.actual ? "  Actual: "+e.actual : "",
+    e.next ? "  Next: "+e.next : ""
+  ].filter(Boolean).join("\n")).join("\n\n") || "No entries yet.";
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>alert("Ledger copied — paste it into the Review Library."));
+  } else { prompt("Copy your ledger:", txt); }
+}
+renderEntries();
+
+// ---------- backup / restore (bridges phone <-> desktop until there's a backend) ----------
+function backupLedger(){
+  const blob = new Blob([JSON.stringify(loadEntries(), null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cockpit-ledger-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function restoreLedger(input){
+  const file = input.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const incoming = JSON.parse(r.result);
+      if (!Array.isArray(incoming)) throw new Error('bad format');
+      const existing = loadEntries();
+      const key = e => e.date + '|' + e.room + '|' + e.ff;
+      const seen = new Set(existing.map(key));
+      const merged = existing.concat(incoming.filter(e => !seen.has(key(e))));
+      merged.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+      storeEntries(merged);
+      renderEntries();
+      alert('Restored — ' + merged.length + ' entries total (duplicates skipped).');
+    } catch(e){ alert('That file is not a Cockpit backup.'); }
+  };
+  r.readAsText(file);
+  input.value = '';
+}
+
+// ---------- service worker (offline) ----------
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
