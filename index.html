@@ -80,7 +80,7 @@
 </head>
 <body>
 <header class="wrap">
-  <div class="k">Field System · Layer 2</div>
+  <div class="k">Field System</div>
   <h1>The <span>Cockpit</span></h1>
 </header>
 
@@ -97,12 +97,13 @@
     <div class="ifthen">
       <p><b>If I feel the shrink</b> → faces, one by one.</p>
       <p><b>If I catch myself performing</b> → what does the room need?</p>
+      <p><b>If I hear myself say "sure, fine, no worries"</b> → the pleaser is driving. What do I actually want?</p>
       <p><b>If the replay starts</b> → name the ask, take it back, do nothing.</p>
     </div>
     <div class="sched">
       <h3>Today's fire schedule</h3>
       <div id="schedule"></div>
-      <p class="note">v0.1 shows the live question when opened. For push, set these seven times once as native phone reminders, each titled "Cockpit" — the phone is the delivery layer, this is the content layer.</p>
+      <p class="note">The app shows the right question whenever you open it. Set these seven times once as phone reminders titled "Cockpit" — the phone rings the bell; this page holds the words.</p>
     </div>
   </div>
 
@@ -133,6 +134,7 @@
       <p>Long, quiet blocks of reading and thinking give me energy. I protect them.</p>
       <p>When a big decision is happening, <b>I am in the room, at full strength</b>.</p>
       <p>I go deep with one or two leaders at a time. Never more.</p>
+      <p>Each room rewards a different strength. <b>I play the one this room rewards</b> — not the one I'm proud of.</p>
     </div>
 
     <div class="ifthen" style="margin-top:14px; border-color:var(--hot);">
@@ -153,7 +155,7 @@
         <p><b>4 · Spark:</b> "Who the hell are they anyway?" The heat is fuel — let it straighten you.</p>
         <p><b>5 · Body:</b> spine straight · breath long, deep, smooth.</p>
         <p><b>6 · Fire.</b> No hesitation. No explaining. No softening.</p>
-        <p><b>7 · Silence.</b> Stop. Let the room recalibrate.</p>
+        <p><b>7 · Silence.</b> Stop talking. Watch the room agree.</p>
         <p class="m">Never punished for my force. Only for hiding it.</p>
       </div>
     </details>
@@ -161,9 +163,9 @@
       <summary><span class="n">02</span><span class="h">FACING RANK</span><span class="w">superiors ·&nbsp;run before</span></summary>
       <div class="steps">
         <p class="lab">The corridor</p>
-        <p><b>1 · Name the prediction.</b> "If power sees me, it will punish me." A prediction, not a fact — my data refutes it.</p>
-        <p><b>2 · Read the ledger.</b> Full force twice: never punished. Hid once: punished — "not a killer," then the exit.</p>
-        <p><b>3 · De-rank.</b> One man. One woman. Rank is a costume — remove it with your eyes.</p>
+        <p><b>1 · Name the prediction.</b> "If power sees me, it will punish me." A prediction, not a fact. My record says otherwise.</p>
+        <p><b>2 · Read the ledger.</b> Spoke at full force twice: never punished. Hid once: punished — "not a killer," then the exit.</p>
+        <p><b>3 · De-rank.</b> One man. One woman. Rank is a costume — take it off with your eyes. Underneath is a nervous human with his own fears.</p>
         <p><b>4 · Verdict:</b> "Man-to-man, I am not less than this person."</p>
         <p><b>5 · Body:</b> spine · breath.</p>
         <p class="lab">The circle</p>
@@ -191,7 +193,20 @@
         <p><b>3 · Name the ask.</b> Take it back. Do nothing — it passes.</p>
         <p><b>4 · Passenger or Driver?</b> Name what I can't change; one guaranteed micro-action.</p>
         <p><b>5 · Log the rep.</b> Fired or flinched, same day.</p>
+        <p>Approval was survival once — as a child, "no" felt like death. I am not a child in this room. <b>I belong to me.</b> The pleaser kept that child alive. Thank him. Let him go.</p>
         <p class="m">I am a solid container. I exist without their observation.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="n">05</span><span class="h">HOLDING THE LINE</span><span class="w">when I hold the rank</span></summary>
+      <div class="steps">
+        <p><b>Gate — ego check first:</b> is this real disrespect, or my ego flinching at pushback? If it moves the work forward, it is not disrespect. Only proceed if it's real.</p>
+        <p><b>1 · Flip it.</b> "What have I done to let them think they can do this?" The tone I tolerate is the tone I taught.</p>
+        <p><b>2 · Sturdy first, warm later.</b> Boundaries set early can relax. Boundaries installed after friendship never hold.</p>
+        <p><b>3 · Address the first crossing</b> — the day it happens. Every silent pass licenses the next one; resentment is the bill for my own silence.</p>
+        <p><b>4 · Compete, don't combat.</b> Cabinet-room rules: hard debate, level voice, reasons on the table, nothing ugly.</p>
+        <p><b>5 · The two-part script:</b> "This happened — talk me through it." Then: "Is there anything I'm doing that makes it harder for you to succeed?"</p>
+        <p class="m">Saying nothing to spare feelings is not kindness. It's how the standard dies.</p>
       </div>
     </details>
   </div>
@@ -201,7 +216,7 @@
     <div class="stat">
       <div><div class="num" id="n-fired">0</div><div class="lbl2">Fired</div></div>
       <div><div class="num" id="n-flinched">0</div><div class="lbl2">Flinched</div></div>
-      <div><div class="num" id="n-rounds">0</div><div class="lbl2">Rounds at the belief</div></div>
+      <div><div class="num" id="n-rounds">0</div><div class="lbl2">Total reps</div></div>
     </div>
     <p class="warn" id="storage-warn">Storage unavailable in this preview — entries will not survive closing. Open the saved file in your own browser for a persistent ledger.</p>
     <form id="f" onsubmit="return saveEntry(event)">
@@ -228,7 +243,7 @@
     <button class="exp" onclick="backupLedger()">BACKUP (DOWNLOAD FILE)</button>
     <button class="exp" onclick="document.getElementById('restore-file').click()">RESTORE FROM BACKUP</button>
     <input type="file" id="restore-file" accept=".json" style="display:none" onchange="restoreLedger(this)">
-    <p class="note">A ledger of wins only is a shrine. Log everything — every "actual outcome" where punishment fails to appear is a round through "power will punish me."</p>
+    <p class="note">A ledger of wins only is a shrine. Log everything. Every entry where the punishment never came is a shot through the old belief.</p>
   </div>
 
 </div>
@@ -243,13 +258,13 @@
 <script>
 // ---------- schedule ----------
 const SLOTS = [
-  { h:7,  m:30, t:"07:30 — The Drill",        q:"Pick today's hardest room. Run one protocol from memory — eyes closed, real faces.", sub:"Closed-book. The faces, the verdict, the spine, the words. Then two short inhales, one long exhale. Sixty seconds; this is the whole system." },
-  { h:11, m:0,  t:"11:00 — Avoidance check",  q:"What am I avoiding right now?", sub:"The success you're looking for is waiting in the work you're avoiding. Name it, then one micro-action." },
-  { h:13, m:30, t:"13:30 — The stranger",     q:"What would a stranger conclude I want out of life, based only on my last hour?", sub:"Behavior is the confession. If the answer stings, change the next hour, not the story." },
-  { h:15, m:15, t:"15:15 — Direction & drift check",  q:"Am I moving toward the life I hate, or the life I want? And right now — maintenance work, a dead framework I should hand off, or an idea with no execution plan?", sub:"Drift is measured against something. Open ★ North and read it — then answer. Each drift pattern has a yes/no answer today." },
-  { h:17, m:0,  t:"17:00 — Integrity check",  q:"What important thing am I pretending isn't important?", sub:"Pretending is the identity defending itself. Say the thing out loud, even just to yourself." },
-  { h:19, m:30, t:"19:30 — Aliveness audit",  q:"Where did I trade aliveness for safety today — protecting my identity, or my genuine desire?", sub:"The old self will cost you the new one, or the other way round. Pick." },
-  { h:21, m:0,  t:"21:00 — Close the day",    q:"When did I feel most alive today? Most dead? — and log today's rep.", sub:"Fired or flinched, it goes on the ledger. One sentence: what do I refuse to repeat tomorrow?" }
+  { h:7,  m:30, t:"07:30 — The Drill",        q:"Pick today's hardest room. Run one protocol from memory — eyes closed, real faces.", sub:"No reading. The faces, the verdict, the spine, the words. Two short inhales, one long exhale. Sixty seconds. This is the whole system." },
+  { h:11, m:0,  t:"11:00 — Avoidance check",  q:"What am I avoiding right now?", sub:"What you want is waiting inside the work you are avoiding. Name it. Take one small step at it now." },
+  { h:13, m:30, t:"13:30 — The stranger",     q:"What would a stranger say I want from life, judging only by my last hour?", sub:"Behavior is the confession. If the answer stings, change the next hour — not the story." },
+  { h:15, m:15, t:"15:15 — Direction & drift check",  q:"Am I moving toward the life I hate, or the life I want? And what is this hour — busywork, a finished thing I should hand off, or an idea with no plan?", sub:"Drift from what? Open ★ North. Read it. Then answer — each question has a yes or no today." },
+  { h:17, m:0,  t:"17:00 — Integrity check",  q:"What important thing am I pretending isn't important?", sub:"Pretending is the old self defending itself. Say the thing out loud." },
+  { h:19, m:30, t:"19:30 — Aliveness audit",  q:"Where did I trade feeling alive for feeling safe today?", sub:"The new life costs the old one. Pick which bill you pay." },
+  { h:21, m:0,  t:"21:00 — Close the day",    q:"When did I feel most alive today? Most dead? Log today's rep.", sub:"Fired or flinched — it goes on the ledger. Then one line: what will I not repeat tomorrow?" }
 ];
 function slotIndex(now){
   let idx = -1;
