@@ -139,6 +139,17 @@
       <p>My charisma is real — people name it before I do. Confidence, empathy, care. <b>I don't put it on. I stop covering it.</b> It is my real self, uncovered.</p>
     </div>
 
+    <div class="ifthen" style="margin-top:14px;">
+      <p style="font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); margin-bottom:10px;">⚔ The Commander — the war frame</p>
+      <p><b>Daily life is war. Business is war.</b> Not because everyone is an enemy — because ground, timing, and position decide outcomes. The man who refuses to see the war loses it politely.</p>
+      <p><b>In chaos, calm is my weapon.</b> Presence of mind is the first victory. I trained for this.</p>
+      <p><b>I read the ground before I fight:</b> who holds what, who listens to whom, what this room rewards.</p>
+      <p><b>I choose my battles.</b> Small fights steal force from the campaign. Every move serves the campaign, not the moment.</p>
+      <p><b>The cleanest win needs no battle.</b> Position so well the fight becomes unnecessary — and I can always leave.</p>
+      <p><b>A commander is calm, never paranoid.</b> My vigilance lives in the system — the drill, the protocols, the ledger — so my nerves can stand down. The sentry who never sleeps loses the war.</p>
+      <p><b>At every door:</b> what ground is this — what do I want here — what does it reward?</p>
+    </div>
+
     <div class="ifthen" style="margin-top:14px; border-color:var(--hot);">
       <p style="font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--hot); margin-bottom:10px;">Why I do it</p>
       <p>This is what I do — it is not all of who I am. The work exists to make life better for <b>real people</b>. Medicine, my family, and the Chronicle come before it, always.</p>
@@ -236,7 +247,20 @@
       <div><div class="num" id="n-rounds">0</div><div class="lbl2">Total reps</div></div>
     </div>
     <p class="warn" id="storage-warn">Storage unavailable in this preview — entries will not survive closing. Open the saved file in your own browser for a persistent ledger.</p>
-    <form id="f" onsubmit="return saveEntry(event)">
+
+    <form onsubmit="return false" style="margin-top:14px;">
+      <label>Quick log — two taps is a complete entry</label>
+      <input type="text" id="q-room" placeholder="the room, in a word or two (optional)">
+      <div class="ff" style="margin-top:10px;">
+        <button type="button" style="padding:18px; font-size:16px;" onclick="quickLog('fired')">FIRED</button>
+        <button type="button" style="padding:18px; font-size:16px;" onclick="quickLog('flinched')">FLINCHED</button>
+      </div>
+      <p class="note" style="margin-top:10px;">Fired = I spoke at force / made the second ask. Flinched counts the same as an entry. Details are optional, forever.</p>
+    </form>
+
+    <details style="margin-top:12px;">
+    <summary style="padding:14px 18px;"><span class="h" style="font-size:14px; color:var(--dim);">Full entry — when you have two minutes</span></summary>
+    <form id="f" onsubmit="return saveEntry(event)" style="margin-top:0;">
       <label>Room / situation</label>
       <input type="text" id="f-room" placeholder="e.g. budget meeting, funder circle" required>
       <label>The trigger</label>
@@ -254,6 +278,7 @@
       <input type="text" id="f-next" placeholder="what signal will I catch earlier?">
       <button class="save" type="submit">LOG THE REP</button>
     </form>
+    </details>
     <div class="lh">Evidence on record</div>
     <div id="entries"></div>
     <button class="exp" onclick="exportLedger()">EXPORT LEDGER (COPY AS TEXT)</button>
@@ -297,7 +322,7 @@ function renderNow(){
   const i = slotIndex(mins);
   const cur = i>=0 ? SLOTS[i] : null;
   document.getElementById('slot-time').textContent = cur ? cur.t : "Before the day begins";
-  document.getElementById('slot-q').textContent = cur ? cur.q : "Spine straight. Breath long. The first question fires at 07:30.";
+  document.getElementById('slot-q').textContent = cur ? cur.q : "Morning watch. Open ★ North and read The Commander. First question fires at 07:30.";
   document.getElementById('slot-sub').textContent = cur ? cur.sub : "";
   const nxt = SLOTS[i+1];
   document.getElementById('slot-next').textContent = nxt ? ("Next: " + nxt.t.replace(" — ", " · ")) : "Last question of the day is live.";
@@ -333,6 +358,13 @@ function loadEntries(){
 function storeEntries(arr){
   if (persistent){ try { localStorage.setItem('cockpit-ledger', JSON.stringify(arr)); return; } catch(e){ persistent=false; document.getElementById('storage-warn').style.display='block'; } }
   MEM = arr;
+}
+function quickLog(v){
+  const room = document.getElementById('q-room').value.trim();
+  const e = { date: new Date().toISOString().slice(0,10), room: room || "(unlabeled)", trigger:"", ff:v, feared:"", actual:"", next:"" };
+  const arr = loadEntries(); arr.unshift(e); storeEntries(arr);
+  document.getElementById('q-room').value = "";
+  renderEntries();
 }
 let ff = null;
 function setFF(v){
